@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ФЭО программы — Калькулятор | КФУ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#004C97;            /* PANTONE 2945 C */
+  --blue-dark:#003366;
+  --blue-deep:#002A56;
+  --blue-light:#E8F0F9;
+  --blue-mist:#F3F7FC;
+  --blue-line:#C9DAEF;
+  --amber:#F2A900;           /* комплиментарный акцент */
+  --amber-soft:#FFF4DC;
+  --ink:#1A2733;
+  --muted:#5B6B7C;
+  --white:#FFFFFF;
+  --ok:#1E7B4D;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'PT Sans',Arial,sans-serif;
+  color:var(--ink);
+  background:var(--blue-mist);
+  font-size:16px;
+  line-height:1.45;
+}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+
+/* ---------- Header ---------- */
+.site-header{
+  background:var(--white);
+  border-bottom:1px solid var(--blue-line);
+  position:sticky;top:0;z-index:50;
+}
+.site-header .wrap{
+  display:flex;align-items:center;gap:16px;
+  padding-top:12px;padding-bottom:12px;
+}
+.logo{display:flex;align-items:center;gap:16px;text-decoration:none;color:var(--ink)}
+.logo img{display:block;flex:none}
+.logo-divider{width:1px;height:38px;background:var(--blue-line)}
+.logo-name{font-weight:700;font-size:15px;line-height:1.15;color:var(--blue);letter-spacing:.2px}
+.logo-name small{display:block;font-weight:400;font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.header-meta{margin-left:auto;text-align:right;font-size:13px;color:var(--muted);line-height:1.35}
+.header-meta b{color:var(--blue);font-size:14px}
+
+/* ---------- Hero ---------- */
+.hero{
+  background:var(--blue);
+  color:var(--white);
+  position:relative;
+  overflow:hidden;
+}
+.hero-pattern{position:absolute;inset:0;pointer-events:none;opacity:.55}
+.hero .wrap{position:relative;padding-top:56px;padding-bottom:60px}
+.hero-kicker{
+  display:inline-block;font-size:13px;letter-spacing:2px;text-transform:uppercase;
+  color:#BFD6F0;border:1px solid rgba(255,255,255,.35);border-radius:999px;
+  padding:6px 16px;margin-bottom:20px;
+}
+.hero h1{font-size:clamp(28px,4vw,44px);line-height:1.15;font-weight:700;max-width:760px}
+.hero p{margin-top:16px;max-width:640px;color:#D6E4F5;font-size:17px}
+.hero-badges{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.hero-badge{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);
+  border-radius:10px;padding:10px 18px;font-size:14px;color:#EAF2FB;
+}
+.hero-badge b{display:block;font-size:18px;color:#fff}
+
+/* ---------- Layout ---------- */
+.layout{
+  display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:28px;
+  padding-top:36px;padding-bottom:64px;align-items:start;
+}
+@media(max-width:1020px){.layout{grid-template-columns:1fr}}
+
+/* ---------- Cards / form ---------- */
+.card{
+  background:var(--white);border:1px solid var(--blue-line);
+  border-radius:var(--radius);margin-bottom:24px;overflow:hidden;
+}
+.card-head{
+  display:flex;align-items:center;gap:14px;
+  padding:18px 24px;border-bottom:1px solid var(--blue-line);
+  background:linear-gradient(180deg,#FDFEFF, #F4F8FD);
+}
+.card-num{
+  flex:none;width:34px;height:34px;border-radius:50%;
+  background:var(--blue);color:#fff;font-weight:700;
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+}
+.card-head h2{font-size:19px;color:var(--blue-dark)}
+.card-head p{font-size:13px;color:var(--muted)}
+.card-body{padding:22px 24px;display:grid;grid-template-columns:1fr 1fr;gap:16px 20px}
+@media(max-width:640px){.card-body{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+.field label{font-size:13px;font-weight:700;color:var(--blue-dark)}
+.field label span.hint{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.field input,.field select,.field textarea{
+  font-family:inherit;font-size:15px;color:var(--ink);
+  border:1px solid var(--blue-line);border-radius:8px;
+  padding:10px 12px;background:#FBFDFF;width:100%;
+  transition:border-color .15s, box-shadow .15s;
+}
+.field textarea{resize:vertical;min-height:44px}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,76,151,.14);background:#fff;
+}
+.field input[readonly]{background:var(--amber-soft);border-color:#EFD9A7;font-weight:700;color:#7A5A00}
+.subhead{
+  grid-column:1/-1;font-size:13px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--muted);
+  border-bottom:1px dashed var(--blue-line);padding-bottom:6px;margin-top:4px;
+}
+.notice{
+  grid-column:1/-1;background:var(--blue-light);border-left:4px solid var(--blue);
+  border-radius:8px;padding:12px 16px;font-size:13.5px;color:var(--blue-dark);
+}
+
+/* ---------- Sidebar summary ---------- */
+.summary{position:sticky;top:86px}
+.summary-card{
+  background:var(--white);border:1px solid var(--blue-line);
+  border-radius:var(--radius);overflow:hidden;
+}
+.summary-head{background:var(--blue);color:#fff;padding:16px 22px}
+.summary-head h2{font-size:17px}
+.summary-head p{font-size:12.5px;color:#C9DCF3}
+.summary-body{padding:8px 22px 16px}
+.kpi{
+  display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  padding:12px 0;border-bottom:1px dashed var(--blue-line);
+}
+.kpi:last-child{border-bottom:none}
+.kpi .k-name{font-size:13.5px;color:var(--muted)}
+.kpi .k-val{font-size:17px;font-weight:700;color:var(--blue-dark);white-space:nowrap;text-align:right}
+.kpi.hero-kpi .k-val{color:var(--blue);font-size:20px}
+.kpi.neg .k-val{color:#B3261E}
+.actions{display:grid;gap:10px;padding:0 22px 20px}
+.btn{
+  font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;
+  border-radius:10px;padding:13px 18px;border:1px solid transparent;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:background .15s, transform .1s;
+}
+.btn:active{transform:translateY(1px)}
+.btn-word{background:var(--amber);color:#3D2C00}
+.btn-word:hover{background:#FFC32E}
+.btn-excel{background:var(--white);color:#7A5A00;border-color:var(--amber)}
+.btn-excel:hover{background:var(--amber-soft)}
+.btn-print{background:var(--white);color:var(--blue);border-color:var(--blue)}
+.btn-print:hover{background:var(--blue-light)}
+.summary-note{font-size:12px;color:var(--muted);padding:0 22px 18px;line-height:1.5}
+
+/* ---------- Calculation table ---------- */
+.calc-section{margin-bottom:28px}
+.calc-title{
+  display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+  margin:34px 0 14px;flex-wrap:wrap;
+}
+.calc-title h2{font-size:24px;color:var(--blue-dark)}
+.calc-title span{font-size:13px;color:var(--muted)}
+.table-scroll{overflow-x:auto;border:1px solid var(--blue-line);border-radius:var(--radius);background:#fff}
+table.calc{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
+table.calc th{
+  background:var(--blue);color:#fff;font-weight:700;text-align:left;
+  padding:11px 14px;font-size:13.5px;white-space:nowrap;
+}
+table.calc th.r,table.calc td.r{text-align:right;white-space:nowrap}
+table.calc td{padding:9px 14px;border-bottom:1px solid #E4ECF5;vertical-align:top}
+table.calc tr.sec td{
+  background:var(--blue-dark);color:#fff;font-weight:700;
+  text-transform:uppercase;font-size:13px;letter-spacing:.8px;
+}
+table.calc tr.sub td{background:var(--blue-light);font-weight:700;color:var(--blue-dark)}
+table.calc tr.res td{background:#F6F9FD;font-weight:700;color:var(--ink)}
+table.calc tr.res td.r{color:var(--blue)}
+table.calc td.ind{padding-left:30px;color:#37485A}
+table.calc td.ind2{padding-left:46px;color:#37485A}
+table.calc tr:hover td{background:#FAFCFE}
+table.calc tr.sec:hover td{background:var(--blue-dark)}
+table.calc tr.sub:hover td{background:var(--blue-light)}
+
+/* ---------- Notes & footer ---------- */
+.notes{
+  background:var(--white);border:1px solid var(--blue-line);border-radius:var(--radius);
+  padding:22px 26px;font-size:13px;color:var(--muted);margin-bottom:40px;
+}
+.notes h3{color:var(--blue-dark);font-size:15px;margin-bottom:10px;letter-spacing:.5px}
+.notes ol{padding-left:20px;display:grid;gap:4px}
+footer{background:var(--blue-deep);color:#A9C4E4;font-size:13px;padding:26px 0}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer b{color:#fff}
+
+.hidden{display:none!important}
+
+/* ---------- Dynamic rows ---------- */
+.dyn-block{grid-column:1/-1;background:#FBFDFF;border:1px dashed var(--blue-line);border-radius:10px;padding:14px 16px}
+.dyn-title{font-size:13px;font-weight:700;color:var(--blue-dark);margin-bottom:10px}
+.dyn-title span{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.dyn-rows{display:grid;gap:8px}
+.dyn-row{display:grid;grid-template-columns:minmax(0,1fr) 130px 34px;gap:8px;align-items:center}
+@media(max-width:560px){.dyn-row{grid-template-columns:minmax(0,1fr) 96px 34px}}
+.dyn-row input{
+  font-family:inherit;font-size:14.5px;color:var(--ink);
+  border:1px solid var(--blue-line);border-radius:8px;padding:9px 12px;background:#fff;width:100%;
+}
+.dyn-row input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,76,151,.14)}
+.dyn-del{
+  width:34px;height:34px;border-radius:8px;border:1px solid #E3C9C9;background:#FDF5F5;
+  color:#B3261E;font-size:17px;cursor:pointer;line-height:1;
+}
+.dyn-del:hover{background:#FBEAEA}
+.btn-add{
+  margin-top:10px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;
+  color:var(--blue);background:var(--blue-light);border:1px solid var(--blue-line);
+  border-radius:8px;padding:8px 14px;
+}
+.btn-add:hover{background:#DBE8F6}
+
+/* ---------- Toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:28px;z-index:100;
+  transform:translate(-50%, 140%);
+  max-width:560px;width:calc(100% - 48px);
+  background:#FDE7EE;border:1px solid #F2A9C4;border-left:6px solid #D6336C;
+  border-radius:12px;padding:16px 46px 16px 18px;
+  box-shadow:0 10px 32px rgba(90,10,40,.18);
+  transition:transform .35s cubic-bezier(.2,.9,.3,1.2);
+}
+.toast.show{transform:translate(-50%, 0)}
+.toast-title{font-weight:700;color:#A61E4D;font-size:15px;margin-bottom:4px}
+.toast-text{font-size:14px;color:#7A2949;line-height:1.45}
+.toast-text b{white-space:nowrap}
+.toast-close{
+  position:absolute;top:8px;right:10px;border:none;background:none;
+  font-size:20px;color:#C0507E;cursor:pointer;line-height:1;
+}
+
+/* ---------- Print ---------- */
+@media print{
+  .site-header,.hero,.layout .form-col,.actions,.summary-note,footer,.calc-title span{display:none!important}
+  body{background:#fff}
+  .layout{display:block;padding:0}
+  .summary{position:static}
+  .table-scroll{border:none;overflow:visible}
+  .wrap{max-width:none;padding:0}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="#">
+      <img src="assets/logo_kfu.svg" alt="Казанский федеральный университет" width="153" height="50">
+      <span class="logo-divider"></span>
+      <span class="logo-name">Департамент развития<small>дополнительного образования</small></span>
+    </a>
+    <div class="header-meta">
+      <b>Калькулятор ФЭО</b><br>
+      финансово-экономическое обоснование программы
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <svg class="hero-pattern" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 400" aria-hidden="true">
+    <g stroke="#2E6DB4" stroke-width="1" fill="none" opacity="0.8">
+      <path d="M-100 420 Q 400 -80 1300 120"/>
+      <path d="M-100 445 Q 420 -50 1300 150"/>
+      <path d="M-100 470 Q 440 -20 1300 180"/>
+      <path d="M-100 495 Q 460 10 1300 210"/>
+      <path d="M-100 520 Q 480 40 1300 240"/>
+      <path d="M-100 545 Q 500 70 1300 270"/>
+      <path d="M-100 570 Q 520 100 1300 300"/>
+      <path d="M-100 595 Q 540 130 1300 330"/>
+      <path d="M-100 620 Q 560 160 1300 360"/>
+      <path d="M-100 645 Q 580 190 1300 390"/>
+    </g>
+    <g stroke="#4E86C6" stroke-width="1" fill="none" opacity="0.5">
+      <path d="M-60 400 Q 500 260 1260 380"/>
+      <path d="M-60 370 Q 500 230 1260 350"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <span class="hero-kicker">Департамент развития дополнительного образования</span>
+    <h1>Финансово-экономическое обоснование стоимости программы</h1>
+    <p>Заполните сведения о программе — калькуляция, себестоимость, точка безубыточности и маржинальность рассчитаются автоматически по утверждённому шаблону КФУ. Готовый документ выгружается в Word для печати и согласования.</p>
+    <div class="hero-badges">
+      <div class="hero-badge"><b>Автоматически</b>нормативы отчислений</div>
+      <div class="hero-badge"><b>1 клик</b>выгрузка в Word</div>
+      <div class="hero-badge"><b>По шаблону</b>ФЭО от 05.08.2026</div>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <div class="layout">
+    <div class="form-col">
+
+      <!-- 1. Общие сведения -->
+      <section class="card" id="card-common">
+        <div class="card-head">
+          <div class="card-num">1</div>
+          <div><h2>Общие сведения о программе</h2><p>пункты 1–4, 10–11 шаблона ФЭО</p></div>
+        </div>
+        <div class="card-body">
+          <div class="field full">
+            <label for="f-type">Вид программы</label>
+            <select id="f-type">
+              <option>дополнительная профессиональная программа повышения квалификации</option>
+              <option>дополнительная профессиональная программа профессиональной переподготовки</option>
+              <option>дополнительная общеобразовательная общеразвивающая программа для взрослых</option>
+              <option>дополнительная общеобразовательная общеразвивающая программа для детей</option>
+              <option>основная программа профессионального обучения</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="f-name">Наименование программы <span class="hint">только название, без аббревиатур вида (ДПП ПК и т.п.)</span></label>
+            <input id="f-name" type="text" placeholder="Например: «Современные цифровые технологии в образовании»">
+          </div>
+          <div class="field full">
+            <label for="f-unit">Подразделение, ответственное за реализацию программы</label>
+            <input id="f-unit" type="text" placeholder="Например: Институт психологии и образования">
+          </div>
+          <div class="field">
+            <label for="f-form">1. Форма обучения <span class="hint" id="contact-hint">зависит от доли контактной работы (п. 5)</span></label>
+            <select id="f-form">
+              <option>очная</option>
+              <option>очно-заочная</option>
+              <option>заочная</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-format">2. Формат обучения</label>
+            <select id="f-format">
+              <option>очный/офлайн на территории КФУ</option>
+              <option>очный/офлайн на территории Заказчика</option>
+              <option>онлайн синхронный</option>
+              <option>онлайн асинхронный</option>
+              <option>смешанный</option>
+              <option>гибридный</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-people">3. Плановый набор, чел.</label>
+            <input id="f-people" type="number" min="0" step="1" value="20">
+          </div>
+          <div class="field">
+            <label for="f-hours">4. Общая трудоемкость программы, ак. час.</label>
+            <input id="f-hours" type="number" min="0" step="1" value="72">
+          </div>
+          <div class="field">
+            <label for="f-theme">10. Тема финансирования</label>
+            <input id="f-theme" type="text" placeholder="Например: оказание платных образовательных услуг">
+          </div>
+          <div class="field">
+            <label for="f-source">11. Источник финансирования</label>
+            <select id="f-source">
+              <option>Платные услуги</option>
+              <option>Бюджетное финансирование (федеральное)</option>
+              <option>Бюджетное финансирование (региональное)</option>
+              <option>Бюджетное финансирование (местное)</option>
+              <option>Целевые средства</option>
+              <option>Смешанное</option>
+            </select>
+          </div>
+          <div class="notice" id="budget-note">Тип программы: <b id="budget-type">Внебюджетная</b>. Нормативы отчислений подставляются автоматически из справочника в зависимости от источника финансирования и формата обучения.</div>
+        </div>
+      </section>
+
+      <!-- 2. Нагрузка -->
+      <section class="card">
+        <div class="card-head">
+          <div class="card-num">2</div>
+          <div><h2>Нагрузка, час.</h2><p>пункты 5–6 шаблона ФЭО</p></div>
+        </div>
+        <div class="card-body">
+          <div class="subhead">5. Учебная нагрузка</div>
+          <div class="field"><label for="f-lec">5.1. Лекции</label><input id="f-lec" type="number" min="0" step="1" value="24"></div>
+          <div class="field"><label for="f-prac">5.2. Практические занятия</label><input id="f-prac" type="number" min="0" step="1" value="40"></div>
+          <div class="field"><label for="f-lab">5.3. Лабораторные занятия</label><input id="f-lab" type="number" min="0" step="1" value="0"></div>
+          <div class="dyn-block full" id="dyn-other-load">
+            <div class="dyn-title">5.4. Иное — детализация видов контактной работы <span>по ЛНА КФУ и утверждённой программе, итого: <b id="sum-other-load">0</b> час.</span></div>
+            <div class="dyn-rows"></div>
+            <button type="button" class="btn-add" data-add="dyn-other-load">+ Добавить вид работ</button>
+          </div>
+          <div class="subhead">6. Внеучебная нагрузка</div>
+          <div class="dyn-block full" id="dyn-extra">
+            <div class="dyn-title">6. Детализация видов работ / услуг <span>по ЛНА КФУ, итого: <b id="sum-extra">0</b> час.</span></div>
+            <div class="dyn-rows"></div>
+            <button type="button" class="btn-add" data-add="dyn-extra">+ Добавить вид работ</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Категории работников -->
+      <section class="card">
+        <div class="card-head">
+          <div class="card-num">3</div>
+          <div><h2>Трудоёмкость и ставки по категориям работников</h2><p>пункты 7–8 шаблона ФЭО</p></div>
+        </div>
+        <div class="card-body">
+          <div class="subhead">7. Детализация трудоёмкости, час.</div>
+          <div class="field"><label for="f-h-doc">7.1. ППС со степенью доктора наук</label><input id="f-h-doc" type="number" min="0" step="1" value="12"></div>
+          <div class="field"><label for="f-h-kand">7.2. ППС со степенью кандидата наук</label><input id="f-h-kand" type="number" min="0" step="1" value="40"></div>
+          <div class="field"><label for="f-h-pps">7.3. ППС без учёной степени</label><input id="f-h-pps" type="number" min="0" step="1" value="12"></div>
+          <div class="field"><label for="f-h-other">7.4. Иные категории работников КФУ</label><input id="f-h-other" type="number" min="0" step="1" value="8"></div>
+          <div class="field"><label for="f-h-gph">7.5. Привлекаемые по договорам ГПХ</label><input id="f-h-gph" type="number" min="0" step="1" value="0"></div>
+          <div class="subhead">8. Ставки почасовой оплаты, руб.</div>
+          <div class="field"><label for="f-r-doc">8.1. ППС со степенью доктора наук</label><input id="f-r-doc" type="number" min="0" step="50" value="1500"></div>
+          <div class="field"><label for="f-r-kand">8.2. ППС со степенью кандидата наук</label><input id="f-r-kand" type="number" min="0" step="50" value="1100"></div>
+          <div class="field"><label for="f-r-pps">8.3. ППС без учёной степени</label><input id="f-r-pps" type="number" min="0" step="50" value="800"></div>
+          <div class="field"><label for="f-r-other">8.4. Иные категории работников КФУ</label><input id="f-r-other" type="number" min="0" step="50" value="500"></div>
+          <div class="field"><label for="f-r-gph">8.5. Привлекаемые по договорам ГПХ</label><input id="f-r-gph" type="number" min="0" step="50" value="1000"></div>
+        </div>
+      </section>
+
+      <!-- 4. Стоимость -->
+      <section class="card">
+        <div class="card-head">
+          <div class="card-num">4</div>
+          <div><h2>Стоимость обучения</h2><p>пункт 9 шаблона ФЭО</p></div>
+        </div>
+        <div class="card-body">
+          <div class="field"><label for="f-price">9. Полная стоимость обучения на одного человека, руб.</label><input id="f-price" type="number" min="0" step="100" value="25000"></div>
+          <div class="field"><label for="f-discount">9.1. Скидка, % <span class="hint">если предусмотрена</span></label><input id="f-discount" type="number" min="0" max="100" step="1" value="0"></div>
+          <div class="field full"><label for="f-price-disc">9.2. Стоимость обучения на одного человека со скидкой, руб. <span class="hint">рассчитывается автоматически</span></label><input id="f-price-disc" type="text" readonly value=""></div>
+        </div>
+      </section>
+
+      <!-- 5. Онлайн-курс -->
+      <section class="card hidden" id="card-online">
+        <div class="card-head">
+          <div class="card-num">5</div>
+          <div><h2>Расходы на онлайн-курс</h2><p>пункт 12 — только при асинхронном / смешанном формате</p></div>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <label for="f-honor">12.1. Авторский гонорар, руб. <span class="hint">вознаграждение за создание контента</span></label>
+            <input id="f-honor" type="number" min="0" step="1000" value="0">
+          </div>
+          <div class="field">
+            <label for="f-honor-mode">12.1.1. Способ распределения</label>
+            <select id="f-honor-mode">
+              <option value="а">а) на консервативное количество групп</option>
+              <option value="б">б) в полном объёме в 1-ю группу</option>
+            </select>
+          </div>
+          <div class="field" id="field-groups">
+            <label for="f-groups">12.1.2. Консервативное количество групп <span class="hint">для варианта «а»</span></label>
+            <input id="f-groups" type="number" min="1" step="1" value="3">
+          </div>
+          <div class="field">
+            <label for="f-royalty">12.2. Роялти, руб. или % <span class="hint">в зависимости от типа роялти</span></label>
+            <input id="f-royalty" type="number" min="0" step="100" value="0">
+          </div>
+          <div class="field">
+            <label for="f-royalty-type">12.2.1. Тип роялти</label>
+            <select id="f-royalty-type">
+              <option value="а">а) фиксированная сумма на группу</option>
+              <option value="б">б) процент от выручки</option>
+              <option value="в">в) сумма на 1 обучающегося</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Прочие расходы -->
+      <section class="card">
+        <div class="card-head">
+          <div class="card-num">6</div>
+          <div><h2>Прочие расходы</h2><p>детализация статей калькуляции — суммы указываются на 1 обучающегося</p></div>
+        </div>
+        <div class="card-body">
+          <div class="subhead">Постоянные расходы</div>
+          <div class="dyn-block full" id="dyn-ot-fixed">
+            <div class="dyn-title">6. Иные постоянные расходы <span>суммы на 1 обучающегося, включаются в калькуляцию</span></div>
+            <div class="dyn-rows"></div>
+            <button type="button" class="btn-add" data-add="dyn-ot-fixed">+ Добавить статью расходов</button>
+          </div>
+          <div class="subhead">Переменные расходы</div>
+          <div class="dyn-block full" id="dyn-var">
+            <div class="dyn-title">1. Переменные расходы, в том числе <span>суммы на 1 обучающегося, включаются в калькуляцию</span></div>
+            <div class="dyn-rows"></div>
+            <button type="button" class="btn-add" data-add="dyn-var">+ Добавить статью расходов</button>
+          </div>
+          <div class="field">
+            <label for="f-bso-text">2. Расчёты по текущим операциям (БСО) — детализация</label>
+            <input id="f-bso-text" type="text" placeholder="бланки строгой отчётности">
+          </div>
+          <div class="field">
+            <label for="f-bso">Сумма на 1 чел., руб.</label>
+            <input id="f-bso" type="number" min="0" step="10" value="0">
+          </div>
+        </div>
+      </section>
+
+      <!-- Калькуляция -->
+      <section class="calc-section">
+        <div class="calc-title">
+          <h2>Калькуляция программы</h2>
+          <span>пересчитывается автоматически при изменении любого поля</span>
+        </div>
+        <div class="table-scroll">
+          <table class="calc" id="calc-table">
+            <thead>
+              <tr>
+                <th style="width:56px">№ п/п</th>
+                <th>Виды расходов</th>
+                <th style="width:110px">Код расходов</th>
+                <th class="r" style="width:150px">Сумма на 1 чел., руб.</th>
+                <th class="r" style="width:170px">Сумма на плановый набор, руб.</th>
+              </tr>
+            </thead>
+            <tbody id="calc-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="notes">
+        <h3>ПРИМЕЧАНИЯ</h3>
+        <ol>
+          <li>Расчёт выполняется по автоматизированному шаблону ФЭО от 05.08.2026.</li>
+          <li>При добавлении строк детализации их суммы автоматически включаются в итоги соответствующих разделов.</li>
+          <li>Для бюджетных программ расчёт точки безубыточности и маржинальности не применяется (п. 2.4 Порядка).</li>
+          <li>Точка безубыточности считается без учёта маржинального дохода, но с учётом плановых накоплений и округляется до целого числа в большую сторону.</li>
+          <li>Нормативы отчислений (раздел 4 Порядка) подтягиваются автоматически из справочника: бюджетные программы — 20% (5% накладные + 15% централизованные), внебюджетные — по формату обучения.</li>
+          <li>Отпускной фонд: 17% от ФОТ ППС и 9% от ФОТ иных категорий работников КФУ. Социальные платежи — 30,2% от ФОТ, по договорам ГПХ — 30%.</li>
+          <li>Авторский гонорар и роялти отображаются только при формате «онлайн асинхронный» или «смешанный».</li>
+          <li>Перечень статей расходов может изменяться в зависимости от реальных затрат.</li>
+          <li>Форма обучения определяется долей контактной работы: очная — более 65%, очно-заочная — от 20% до 64%, заочная — менее 19%.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="summary">
+      <div class="summary-card">
+        <div class="summary-head">
+          <h2>Экономические показатели</h2>
+          <p>итоги расчёта в реальном времени</p>
+        </div>
+        <div class="summary-body">
+          <div class="kpi hero-kpi"><span class="k-name">Выручка от реализации</span><span class="k-val" id="k-revenue">—</span></div>
+          <div class="kpi"><span class="k-name">Полная себестоимость</span><span class="k-val" id="k-cost">—</span></div>
+          <div class="kpi"><span class="k-name">Цена реализации на 1 обучающегося</span><span class="k-val" id="k-price">—</span></div>
+          <div class="kpi" id="k-margin-row"><span class="k-name">Маржинальный доход</span><span class="k-val" id="k-margin">—</span></div>
+          <div class="kpi"><span class="k-name">Маржинальность</span><span class="k-val" id="k-margin-pct">—</span></div>
+          <div class="kpi"><span class="k-name">Точка безубыточности</span><span class="k-val" id="k-breakeven">—</span></div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-word" id="btn-word" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.8"/><path d="M14 2v6h6" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 12l1.7 6 1.8-4.5L13.8 18l1.7-6" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Сформировать Word для печати
+          </button>
+          <button class="btn btn-excel" id="btn-excel" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.8"/><path d="M14 2v6h6" stroke="currentColor" stroke-width="1.8"/><path d="M9 11l6 7M15 11l-6 7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+            Сформировать Excel с формулами
+          </button>
+          <button class="btn btn-print" id="btn-print" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 8V3h10v5M7 17H4v-6a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v6h-3M7 14h10v7H7v-7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            Печать калькуляции
+          </button>
+        </div>
+        <p class="summary-note">Документ Word формируется по утверждённой форме: блок «УТВЕРЖДАЮ», сведения о программе, калькуляция, лист согласования и примечания. Файл Excel повторяет структуру шаблона и содержит все формулы — расчёт пересчитывается при изменении данных в книге.</p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<div class="toast" id="toast-form" role="alert">
+  <button type="button" class="toast-close" id="toast-close" title="Закрыть">&times;</button>
+  <div class="toast-title">Проверьте форму обучения</div>
+  <div class="toast-text" id="toast-text"></div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div><b>Казанский федеральный университет</b><br>Департамент развития дополнительного образования</div>
+    <div>+7 (843) 206-52-47 · dpo@kpfu.ru<br>dpo.kpfu.ru</div>
+  </div>
+</footer>
+
+<script>
+/* ================= Данные справочника (лист «Справочник» шаблона) ================= */
+const NORMS = {
+  'Бюджетные': {n:0.05, c:0.15, p:0},
+  'Внебюджетные_очный/офлайн на территории КФУ':      {n:0.10, c:0.20, p:0.05},
+  'Внебюджетные_очный/офлайн на территории Заказчика':{n:0.05, c:0.15, p:0.05},
+  'Внебюджетные_онлайн синхронный':                   {n:0.05, c:0.20, p:0.05},
+  'Внебюджетные_онлайн асинхронный':                  {n:0.05, c:0.15, p:0.05},
+  'Внебюджетные_смешанный':                           {n:0.10, c:0.17, p:0.05},
+  'Внебюджетные_гибридный':                           {n:0.10, c:0.20, p:0.05}
+};
+
+const $ = id => document.getElementById(id);
+const num = id => { const v = parseFloat($(id).value); return isNaN(v) ? 0 : v; };
+const txt = id => $(id).value.trim();
+
+/* ---------- Динамические строки детализации ---------- */
+const DYN_PRESETS = {
+  'dyn-other-load': {name:'консультации', val:8, vph:'час.'},
+  'dyn-extra':      {name:'сопровождение обучающихся', val:0, vph:'час.'},
+  'dyn-ot-fixed':   {name:'аренда помещения', val:0, vph:'руб./чел.'},
+  'dyn-var':        {name:'расходные материалы', val:0, vph:'руб./чел.'}
+};
+function addDynRow(blockId, name, val){
+  const preset = DYN_PRESETS[blockId];
+  const rows = document.querySelector('#' + blockId + ' .dyn-rows');
+  const div = document.createElement('div');
+  div.className = 'dyn-row';
+  div.innerHTML =
+    '<input type="text" class="d-name" placeholder="Наименование" value="' + (name !== undefined ? esc(name) : '') + '">' +
+    '<input type="number" class="d-val" min="0" step="1" value="' + (val !== undefined ? val : 0) + '" title="' + preset.vph + '">' +
+    '<button type="button" class="dyn-del" title="Удалить строку">&times;</button>';
+  div.querySelector('.dyn-del').addEventListener('click', () => { div.remove(); render(); });
+  rows.appendChild(div);
+  render();
+}
+function readDyn(blockId){
+  return Array.from(document.querySelectorAll('#' + blockId + ' .dyn-row')).map(row => ({
+    name: row.querySelector('.d-name').value.trim(),
+    val: parseFloat(row.querySelector('.d-val').value) || 0
+  })).filter(row => row.name !== '' || row.val !== 0);
+}
+function dynSum(blockId){ return readDyn(blockId).reduce((a, b) => a + b.val, 0); }
+document.querySelectorAll('.btn-add').forEach(btn =>
+  btn.addEventListener('click', () => addDynRow(btn.dataset.add)));
+
+const nf = new Intl.NumberFormat('ru-RU', {minimumFractionDigits:0, maximumFractionDigits:2});
+const nf1 = new Intl.NumberFormat('ru-RU', {minimumFractionDigits:0, maximumFractionDigits:1});
+function fmt(v){ return isFinite(v) ? nf.format(v) : '—'; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ================= Расчёт (формулы листа «ФЭО») ================= */
+function calc(){
+  const s = {
+    name: txt('f-name'), type: $('f-type').value, unit: txt('f-unit'),
+    form: $('f-form').value, format: $('f-format').value,
+    people: num('f-people'), hours: num('f-hours'),
+    theme: txt('f-theme'), source: $('f-source').value,
+    lec: num('f-lec'), prac: num('f-prac'), lab: num('f-lab'),
+    otherLoadRows: readDyn('dyn-other-load'),
+    extraRows: readDyn('dyn-extra'),
+    hDoc: num('f-h-doc'), hKand: num('f-h-kand'), hPps: num('f-h-pps'), hOther: num('f-h-other'), hGph: num('f-h-gph'),
+    rDoc: num('f-r-doc'), rKand: num('f-r-kand'), rPps: num('f-r-pps'), rOther: num('f-r-other'), rGph: num('f-r-gph'),
+    price: num('f-price'), discount: num('f-discount'),
+    honor: num('f-honor'), honorMode: $('f-honor-mode').value, groups: Math.max(1, num('f-groups') || 1),
+    royalty: num('f-royalty'), royaltyType: $('f-royalty-type').value,
+    otFixedRows: readDyn('dyn-ot-fixed'),
+    varRows: readDyn('dyn-var'),
+    bsoText: txt('f-bso-text'), bso: num('f-bso')
+  };
+  s.otherLoad = s.otherLoadRows.reduce((a, b) => a + b.val, 0);
+  s.extra = s.extraRows.reduce((a, b) => a + b.val, 0);
+  s.otFixed = s.otFixedRows.reduce((a, b) => a + b.val, 0);
+  s.varCost = s.varRows.reduce((a, b) => a + b.val, 0);
+  const r = {s};
+  const n = s.people;                       // D15
+  const per = v => n > 0 ? v / n : 0;       // деление на плановый набор
+
+  r.isBudget  = s.source.indexOf('Бюджет') !== -1;
+  r.isAsync   = (s.format === 'онлайн асинхронный' || s.format === 'смешанный');
+  r.norm      = r.isBudget ? NORMS['Бюджетные'] : (NORMS['Внебюджетные_' + s.format] || {n:0,c:0,p:0});
+
+  r.priceDisc = s.price * (1 - s.discount / 100);            // D41
+
+  r.E55 = s.price;                                            // выручка на 1 чел.
+  r.F55 = r.E55 * n;                                          // выручка на набор
+
+  // Зарплата
+  r.F60 = s.hDoc * s.rDoc;   r.E60 = per(r.F60);
+  r.F61 = s.hKand * s.rKand; r.E61 = per(r.F61);
+  r.F62 = s.hPps * s.rPps;   r.E62 = per(r.F62);
+  r.F63 = s.hOther * s.rOther; r.E63 = per(r.F63);
+  r.F58 = r.F60 + r.F61 + r.F62 + r.F63; r.E58 = per(r.F58);  // ЗП всего
+
+  r.F64 = (r.F60 + r.F61 + r.F62) * 0.17; r.E64 = per(r.F64); // отпускной фонд ППС
+  r.F65 = r.F63 * 0.09;                   r.E65 = per(r.F65); // отпускной фонд иных
+  r.F66 = (r.F58 + r.F64 + r.F65) * 0.302; r.E66 = per(r.F66);// соц. платежи 30,2%
+  r.F67 = s.hGph * s.rGph;                r.E67 = per(r.F67); // ГПХ
+  r.F68 = r.F67 * 0.30;                   r.E68 = per(r.F68); // соц. платежи ГПХ 30%
+  r.F69 = s.otFixed * n;                  r.E69 = s.otFixed;  // иные постоянные
+
+  // Онлайн-курс
+  r.F70 = r.isAsync ? (s.honorMode === 'а' ? s.honor / s.groups : s.honor) : 0;
+  r.E70 = per(r.F70);
+  r.F71 = (r.isAsync && s.royaltyType === 'а') ? s.royalty : 0;
+  r.E71 = per(r.F71);
+
+  r.F57 = r.F58 + r.F64 + r.F65 + r.F66 + r.F67 + r.F68 + r.F69 + r.F70 + r.F71; // постоянные
+  r.E57 = per(r.F57);
+
+  // Переменные
+  r.F73 = s.varCost * n; r.E73 = s.varCost;
+  r.F74 = s.bso * n;     r.E74 = s.bso;
+  r.E75 = r.isAsync ? (s.royaltyType === 'в' ? s.royalty : (s.royaltyType === 'б' ? s.royalty / 100 * r.E55 : 0)) : 0;
+  r.F75 = r.E75 * n;
+  r.E77 = s.price * r.norm.c;  r.F77 = r.E77 * n;   // централизованные
+  r.E78 = s.price * r.norm.n;  r.F78 = r.E78 * n;   // накладные
+  r.E79 = s.price * r.norm.p;  r.F79 = r.E79 * n;   // плановые накопления
+  r.E76 = r.E77 + r.E78 + r.E79; r.F76 = r.E76 * n; // отчисления
+  r.F72 = r.F73 + r.F74 + r.F75 + r.F76;            // переменные
+  r.E72 = per(r.F72);
+
+  // Экономические показатели
+  r.F81 = r.F72 + r.F57;                  // полная себестоимость
+  r.F82 = r.E72 + r.E57;                  // цена реализации на 1 обучающегося
+  r.F83 = s.price > 0 ? r.F81 / s.price : 0; // точка безубыточности
+  r.F84 = r.F55 - r.F81;                  // маржинальный доход
+  r.F85 = (r.F55 > 0 && r.F84 !== 0) ? r.F84 / r.F55 : 0; // маржинальность
+  return r;
+}
+
+/* ================= Таблица калькуляции ================= */
+function buildRows(r){
+  const s = r.s;
+  const n = s.people;
+  const rows = [];
+  const sec  = (numb,t)   => rows.push({cls:'sec', num:numb, name:t, code:'', e:'', f:''});
+  const sub  = (numb,t,e,f)   => rows.push({cls:'sub', num:numb, name:t, code:'', e:fmt(e), f:fmt(f)});
+  const item = (numb,t,code,e,f,ind) => rows.push({cls:'', num:numb, name:t, code:code||'', e:fmt(e), f:fmt(f), ind:ind||0});
+  const res  = (numb,t,code,f,unit) => rows.push({cls:'res', num:numb, name:t, code:code||'', e:'', f: unit ? f : fmt(f)});
+
+  sec('1.', 'ДОХОДЫ');
+  item('1.1.', 'Выручка от реализации программы', '', r.E55, r.F55, 1);
+
+  sec('2.', 'РАСХОДЫ');
+  sub('2.1.', 'Постоянные расходы', r.E57, r.F57);
+  item('1.', 'Заработная плата всего:', '', r.E58, r.F58, 1);
+  rows.push({cls:'', num:'', name:'в том числе:', code:'', e:'', f:'', ind:1});
+  item('1.1.', 'Заработная плата ППС со степенью доктора наук', '211', r.E60, r.F60, 2);
+  item('1.2.', 'Заработная плата ППС со степенью кандидата наук', '211', r.E61, r.F61, 2);
+  item('1.3.', 'Заработная плата ППС без учёной степени', '211', r.E62, r.F62, 2);
+  item('1.4.', 'Заработная плата иных категорий работников КФУ', '211', r.E63, r.F63, 2);
+  item('2.', 'Отпускной фонд ППС', '211', r.E64, r.F64, 1);
+  item('3.', 'Отпускной фонд иных категорий работников КФУ', '211', r.E65, r.F65, 1);
+  item('4.', 'Социальные платежи', '213', r.E66, r.F66, 1);
+  item('5.', 'Вознаграждение лиц по договорам ГПХ', '226', r.E67, r.F67, 1);
+  item('5.1.', 'Социальные платежи', '226', r.E68, r.F68, 2);
+  item('6.', 'Иные постоянные расходы, в том числе:', '', r.E69, r.F69, 1);
+  s.otFixedRows.forEach((row, i) => {
+    item('6.' + (i + 1) + '.', esc(row.name) || 'статья ' + (i + 1), '', row.val, row.val * n, 2);
+  });
+  if(r.isAsync){
+    item('7.', 'Авторский гонорар (при асинхронном/смешанном формате)', '226', r.E70, r.F70, 1);
+    item('8.', 'Роялти (фиксированная стоимость за плановый набор)', '226', r.E71, r.F71, 1);
+  }
+
+  sub('2.2.', 'Переменные расходы', r.E72, r.F72);
+  item('1.', 'Переменные расходы, в том числе:', '', r.E73, r.F73, 1);
+  s.varRows.forEach((row, i) => {
+    item('1.' + (i + 1) + '.', esc(row.name) || 'статья ' + (i + 1), '', row.val, row.val * n, 2);
+  });
+  item('2.', 'Расчёты по текущим операциям' + (s.bsoText ? ' (' + esc(s.bsoText) + ')' : ' (бланки строгой отчётности)'), '', r.E74, r.F74, 1);
+  if(r.isAsync){
+    item('3.', 'Роялти (плавающая стоимость от количества обучающихся)', '', r.E75, r.F75, 1);
+  }
+  item('4.', 'Отчисления, в том числе:', '', r.E76, r.F76, 1);
+  item('4.1.', 'Централизованные средства', '813', r.E77, r.F77, 2);
+  item('4.2.', 'Накладные расходы', '812', r.E78, r.F78, 2);
+  item('4.3.', 'Плановые накопления', '816', r.E79, r.F79, 2);
+
+  sec('3.', 'ЭКОНОМИЧЕСКИЕ ПОКАЗАТЕЛИ');
+  res('3.1.', 'Полная себестоимость Программы, руб.', '', r.F81);
+  res('3.2.', 'Цена реализации на 1 обучающегося, руб.', '', r.F82);
+  res('3.3.', 'Точка безубыточности, чел.', '', r.isBudget ? 'не применяется' : fmt(Math.ceil(r.F83)), true);
+  res('3.4.', 'Маржинальный доход, руб.', '820', r.F84);
+  res('3.5.', 'Маржинальность, %', '', r.isBudget ? 'не применяется' : nf1.format(r.F85 * 100), true);
+  return rows;
+}
+
+/* ---------- Проверка соответствия формы обучения доле контактной работы ---------- */
+let toastTimer = null;
+let toastDismissedFor = null;
+function expectedForm(pct){ return pct >= 65 ? 'очная' : (pct >= 20 ? 'очно-заочная' : 'заочная'); }
+function checkStudyForm(r){
+  const s = r.s;
+  const contact = s.lec + s.prac + s.lab + s.otherLoad;  // п. 5 «Учебная нагрузка»
+  const hint = $('contact-hint');
+  const toast = $('toast-form');
+  if(s.hours <= 0){ hint.textContent = 'зависит от доли контактной работы (п. 5)'; toast.classList.remove('show'); return; }
+  const pct = contact / s.hours * 100;
+  const expected = expectedForm(pct);
+  hint.textContent = 'контактная работа: ' + fmt(contact) + ' из ' + fmt(s.hours) + ' ак. час. (' + nf1.format(pct) + '%) — рекомендуется форма «' + expected + '»';
+  if(s.form !== expected && toastDismissedFor !== s.form + '|' + expected){
+    $('toast-text').innerHTML =
+      'Доля контактной работы с обучающимися составляет <b>' + nf1.format(pct) + '%</b> (' + fmt(contact) + ' из ' + fmt(s.hours) + ' ак. час.). ' +
+      'При таком объёме форма обучения должна быть <b>«' + expected + '»</b>, а сейчас выбрана <b>«' + s.form + '»</b>. ' +
+      'Очная — более 65% контактной работы, очно-заочная — от 20% до 64%, заочная — менее 19%.';
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 12000);
+  } else if(s.form === expected){
+    toast.classList.remove('show');
+    toastDismissedFor = null;
+  }
+}
+$('toast-close').addEventListener('click', () => {
+  const r = calc();
+  const contact = r.s.lec + r.s.prac + r.s.lab + r.s.otherLoad;
+  if(r.s.hours > 0) toastDismissedFor = r.s.form + '|' + expectedForm(contact / r.s.hours * 100);
+  $('toast-form').classList.remove('show');
+});
+
+function render(){
+  const r = calc();
+
+  // условная видимость блока онлайн-курса
+  $('card-online').classList.toggle('hidden', !r.isAsync);
+  $('budget-type').textContent = r.isBudget ? 'Бюджетная' : 'Внебюджетная';
+  $('f-price-disc').value = fmt(r.priceDisc);
+  $('sum-other-load').textContent = fmt(r.s.otherLoad);
+  $('sum-extra').textContent = fmt(r.s.extra);
+  checkStudyForm(r);
+
+  // KPI
+  $('k-revenue').textContent = fmt(r.F55) + ' ₽';
+  $('k-cost').textContent = fmt(r.F81) + ' ₽';
+  $('k-price').textContent = fmt(r.F82) + ' ₽';
+  $('k-margin').textContent = fmt(r.F84) + ' ₽';
+  $('k-margin-row').classList.toggle('neg', r.F84 < 0);
+  $('k-margin-pct').textContent = r.isBudget ? 'не применяется' : nf1.format(r.F85 * 100) + ' %';
+  $('k-breakeven').textContent = r.isBudget ? 'не применяется' : fmt(Math.ceil(r.F83)) + ' чел.';
+
+  // таблица
+  const body = $('calc-body');
+  body.innerHTML = buildRows(r).map(row => {
+    const tdCls = row.ind === 1 ? ' class="ind"' : (row.ind === 2 ? ' class="ind2"' : '');
+    return `<tr class="${row.cls}"><td>${row.num}</td><td${tdCls}>${row.name}</td><td>${row.code}</td><td class="r">${row.e}</td><td class="r">${row.f}</td></tr>`;
+  }).join('');
+}
+
+document.addEventListener('input', e => {
+  if (e.target.matches('input, select, textarea')) render();
+});
+document.addEventListener('change', e => {
+  if (e.target.matches('input, select, textarea')) render();
+});
+// стартовые строки детализации
+addDynRow('dyn-other-load', 'консультации, итоговая аттестация', 8);
+addDynRow('dyn-ot-fixed', '', 0);
+addDynRow('dyn-var', '', 0);
+render();
+</script>
+
+<script src="assets/xlsx.full.min.js"></script>
+<script>
+/* ================= Экспорт в Word ================= */
+function infoRows(r){
+  const s = r.s;
+  const rows = [
+    ['1.', 'Форма обучения', s.form],
+    ['2.', 'Формат обучения', s.format],
+    ['3.', 'Плановый набор (чел.)', String(s.people)],
+    ['4.', 'Общая трудоемкость программы (ак.час.)', String(s.hours)],
+    ['5.', 'Учебная нагрузка (час.):', ''],
+    ['5.1.', 'лекции', String(s.lec)],
+    ['5.2.', 'практические занятия', String(s.prac)],
+    ['5.3.', 'лабораторные занятия', String(s.lab)],
+    ['5.4.', 'иное, в том числе:', String(s.otherLoad)]
+  ];
+  s.otherLoadRows.forEach((row, i) => {
+    rows.push(['5.4.' + (i + 1) + '.', esc(row.name) || 'вид работ ' + (i + 1), String(row.val)]);
+  });
+  rows.push(['6.', 'Внеучебная нагрузка (час.):', s.extra > 0 ? String(s.extra) : '']);
+  s.extraRows.forEach((row, i) => {
+    rows.push(['6.' + (i + 1) + '.', esc(row.name) || 'вид работ ' + (i + 1), String(row.val)]);
+  });
+  rows.push(
+    ['7.', 'Детализация трудоемкости по категориям работников (час.)', ''],
+    ['7.1.', 'ППС со степенью доктора наук', String(s.hDoc)],
+    ['7.2.', 'ППС со степенью кандидата наук', String(s.hKand)],
+    ['7.3.', 'ППС без ученой степени', String(s.hPps)],
+    ['7.4.', 'Иные категории работников КФУ', String(s.hOther)],
+    ['7.5.', 'Привлекаемые по договорам ГПХ', String(s.hGph)],
+    ['8.', 'Ставки почасовой оплаты (руб.)', ''],
+    ['8.1.', 'ППС со степенью доктора наук', fmt(s.rDoc)],
+    ['8.2.', 'ППС со степенью кандидата наук', fmt(s.rKand)],
+    ['8.3.', 'ППС без ученой степени', fmt(s.rPps)],
+    ['8.4.', 'Иные категории работников КФУ', fmt(s.rOther)],
+    ['8.5.', 'Привлекаемые по договорам ГПХ', fmt(s.rGph)],
+    ['9.', 'Полная стоимость обучения на одного человека (руб.)', fmt(s.price)],
+    ['9.1.', '% скидки (если предусмотрено)', String(s.discount)],
+    ['9.2.', 'стоимость обучения на одного человека со скидкой ' + s.discount + '% (руб.)', fmt(r.priceDisc)],
+    ['10.', 'Тема финансирования', esc(s.theme)],
+    ['11.', 'Источник финансирования', esc(s.source)]
+  );
+  if(r.isAsync){
+    rows.push(['12.', 'Расходы на онлайн-курс', '']);
+    rows.push(['12.1.', 'Авторский гонорар (вознаграждение за создание контента), руб.', fmt(s.honor)]);
+    rows.push(['12.1.1.', 'Способ распределения:', s.honorMode === 'а' ? 'а) на консервативное количество групп' : 'б) в полном объеме в 1-ю группу']);
+    if(s.honorMode === 'а') rows.push(['12.1.2.', 'Консервативное количество групп', String(s.groups)]);
+    rows.push(['12.2.', 'Роялти (периодические отчисления за использование контента)', fmt(s.royalty) + (s.royaltyType === 'б' ? ' %' : ' руб.')]);
+    rows.push(['12.2.1.', 'Тип роялти:', {а:'а) фиксированная сумма на группу', б:'б) процент от выручки', в:'в) сумма на 1 обучающегося'}[s.royaltyType]]);
+  }
+  return rows;
+}
+
+function exportWord(){
+  const r = calc();
+  const s = r.s;
+  const today = new Date().toLocaleDateString('ru-RU');
+
+  const infoHtml = infoRows(r).map(row => {
+    const isHead = row[2] === '';
+    return '<tr><td class="c">' + row[0] + '</td><td>' + (isHead ? '<b>' + row[1] + '</b>' : row[1]) + '</td><td>' + row[2] + '</td></tr>';
+  }).join('');
+
+  const calcHtml = buildRows(r).map(row => {
+    let cls = '';
+    if(row.cls === 'sec') cls = ' class="sec"';
+    else if(row.cls === 'sub') cls = ' class="sub"';
+    else if(row.cls === 'res') cls = ' class="res"';
+    const pad = row.ind === 1 ? ' style="padding-left:18pt"' : (row.ind === 2 ? ' style="padding-left:32pt"' : '');
+    return '<tr' + cls + '><td class="c">' + row.num + '</td><td' + pad + '>' + row.name + '</td><td class="c">' + row.code + '</td><td class="r">' + row.e + '</td><td class="r">' + row.f + '</td></tr>';
+  }).join('');
+
+  const html =
+'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+'<head><meta charset="utf-8"><title>ФЭО</title>' +
+'<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->' +
+'<style>' +
+'@page{size:A4;margin:1.5cm 1.5cm 1.5cm 2cm;mso-page-orientation:portrait}' +
+'body{font-family:"PT Sans",Arial,sans-serif;font-size:10pt;color:#000}' +
+'table{border-collapse:collapse;width:100%}' +
+'td,th{border:1px solid #000;padding:3pt 5pt;vertical-align:top;font-size:9pt;' +
+'border-style:solid;border-width:1px;border-color:#000000}' +
+'td.c,th.c{text-align:center}td.r,th.r{text-align:right;white-space:nowrap}' +
+'tr.sec td{background:#DCE6F1;font-weight:bold;text-transform:uppercase}' +
+'tr.sub td{background:#EDF2F8;font-weight:bold}' +
+'tr.res td{font-weight:bold}' +
+'.appr td{border:none;font-size:10pt;padding:1pt}' +
+'.sign td{border:none;font-size:10pt;padding:4pt 1pt}' +
+'.noborder td{border:none}' +
+'</style></head><body>' +
+
+'<table class="appr" border="0" width="100%" cellpadding="0" cellspacing="0"><tr>' +
+'<td width="50%">&nbsp;</td>' +
+'<td width="50%"><b>УТВЕРЖДАЮ</b><br>' +
+'Проректор по дополнительному образованию<br><br>' +
+'_________________________И.А. Хайруллин<br><br>' +
+'«_____» __________________ 20___г.</td>' +
+'</tr></table>' +
+
+'<p style="text-align:center;font-size:13pt;margin-top:24pt;margin-bottom:4pt"><b>Финансово-экономическое обоснование стоимости</b></p>' +
+'<p style="text-align:center;margin:0 40pt 2pt"><b>' + esc(s.type) + '</b></p>' +
+'<p style="text-align:center;border-bottom:1px solid #000;padding-bottom:2pt;margin:0 40pt">' + (esc(s.name) || 'наименование программы') + '</p>' +
+'<p style="text-align:center;font-size:8pt;margin-top:1pt">(наименование программы)</p>' +
+'<p style="margin-top:14pt">Вид программы: <b>' + esc(s.type) + '</b><br>' +
+'Подразделение, ответственное за реализацию программы: <b>' + (esc(s.unit) || '____________________________') + '</b></p>' +
+
+'<p style="text-align:center;margin-top:16pt"><b>Сведения о программе</b></p>' +
+'<table border="1"><thead><tr><th class="c" style="width:8%">№</th><th style="width:62%">Показатель</th><th style="width:30%">Значение</th></tr></thead><tbody>' +
+infoHtml + '</tbody></table>' +
+
+'<p style="text-align:center;margin-top:16pt"><b>Калькуляция программы</b></p>' +
+'<table border="1"><thead><tr>' +
+'<th class="c" style="width:7%">№ п/п</th><th style="width:47%">Виды расходов</th>' +
+'<th class="c" style="width:11%">Код расходов</th><th class="r" style="width:17%">Сумма на 1 чел., руб.</th>' +
+'<th class="r" style="width:18%">Сумма на плановый набор, руб.</th>' +
+'</tr></thead><tbody>' + calcHtml + '</tbody></table>' +
+
+'<p style="margin-top:22pt"><b>СОГЛАСОВАНО:</b></p>' +
+'<table class="sign" border="0">' +
+'<tr><td style="width:55%">Директор Департамента развития дополнительного образования</td><td style="width:45%">________________/ И.О. Фамилия</td></tr>' +
+'<tr><td>Директор Департамента экономики и финансов</td><td>________________/ И.О. Фамилия</td></tr>' +
+'<tr><td>Руководитель основного структурного подразделения</td><td>________________/ И.О. Фамилия</td></tr>' +
+'</table>' +
+
+'<p style="margin-top:18pt"><b>ПРИМЕЧАНИЯ:</b></p>' +
+'<ol style="font-size:8.5pt;margin-top:2pt">' +
+'<li>Расчёт выполнен по автоматизированному шаблону ФЭО от 05.08.2026: поля формы соответствуют жёлтым ячейкам шаблона (ручной ввод), расчётные показатели — зелёным ячейкам (автоматический расчёт по формулам).</li>' +
+'<li>При добавлении строк детализации (п. 5.4 «иное», п. 6 «внеучебная нагрузка», иные постоянные и переменные расходы) их суммы автоматически включаются в итоги соответствующих разделов.</li>' +
+'<li>Для бюджетных программ расчёт точки безубыточности и маржинальности не применяется (п. 2.4 Порядка).</li>' +
+'<li>Точка безубыточности считается без учёта маржинального дохода, но с учётом плановых накоплений и округляется до целого числа в большую сторону.</li>' +
+'<li>Нормативы отчислений (раздел 4 Порядка) подтягиваются автоматически из справочника. Бюджетные программы — 20% (5% накладные + 15% централизованные), внебюджетные — по формату обучения.</li>' +
+'<li>Отпускной фонд рассчитывается как % от ФОТ: 17% — для ППС, 9% — для иных категорий работников КФУ. Социальные платежи — 30,2% от ФОТ; по договорам ГПХ — 30%.</li>' +
+'<li>Авторский гонорар и роялти отображаются только при выборе формата «онлайн асинхронный» или «смешанный».</li>' +
+'<li>При варианте «а» (консервативное количество групп) гонорар распределяется на указанное количество групп.</li>' +
+'<li>При варианте «б» (полная сумма в 1-ю группу) гонорар включается в постоянные расходы первого набора.</li>' +
+'<li>Роялти: тип определяет формулу — фиксированная сумма на группу, процент от выручки или сумма на 1 обучающегося.</li>' +
+'<li>Перечень статей расходов может изменяться в зависимости от реальных затрат.</li>' +
+'<li>Механизм защиты бюджета КФУ: при превышении рыночной цены — решение проректора по дополнительному образованию по согласованию с проректором по финансам (п. 4.6 Порядка).</li>' +
+'<li>Форма обучения определяется долей контактной работы педагогического работника с обучающимся: очная — более 65%, очно-заочная — от 20% до 64%, заочная — менее 19%.</li>' +
+'</ol>' +
+'<p style="font-size:8pt;color:#555;margin-top:10pt">Сформировано: ' + today + ' · Калькулятор ФЭО КФУ</p>' +
+'</body></html>';
+
+  const blob = new Blob(['\ufeff' + html], {type: 'application/msword;charset=utf-8'});
+  const a = document.createElement('a');
+  const fname = ('ФЭО_' + (s.name || 'программа')).replace(/[\\/:*?"<>|]/g, '_').slice(0, 120) + '.doc';
+  a.href = URL.createObjectURL(blob);
+  a.download = fname;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+
+$('btn-word').addEventListener('click', exportWord);
+$('btn-print').addEventListener('click', () => window.print());
+</script>
+</body>
+</html>
+
+<script>
+/* ================= Экспорт в Excel (все формулы и зависимости шаблона) ================= */
+/* Патч zip-контейнера: добавляет <calcPr fullCalcOnLoad="1"/> в xl/workbook.xml,
+   чтобы Excel/LibreOffice полностью пересчитали формулы при открытии файла. */
+async function patchCalcOnLoad(u8){
+  u8 = u8 instanceof Uint8Array ? u8 : new Uint8Array(u8);
+  const dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
+  const dec = new TextDecoder();
+  // читаем центральный каталог
+  let eocd = -1;
+  for(let i = u8.length - 22; i >= 0; i--){
+    if(dv.getUint32(i, true) === 0x06054b50){ eocd = i; break; }
+  }
+  if(eocd < 0) return new Blob([u8], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const cdCount = dv.getUint16(eocd + 10, true);
+  let cdOff = dv.getUint32(eocd + 16, true);
+  const entries = [];
+  let target = null;
+  for(let k = 0; k < cdCount; k++){
+    if(dv.getUint32(cdOff, true) !== 0x02014b50) break;
+    const method  = dv.getUint16(cdOff + 10, true);
+    const crc     = dv.getUint32(cdOff + 16, true);
+    const cSize   = dv.getUint32(cdOff + 20, true);
+    const uSize   = dv.getUint32(cdOff + 24, true);
+    const nLen    = dv.getUint16(cdOff + 28, true);
+    const xLen    = dv.getUint16(cdOff + 30, true);
+    const cLen    = dv.getUint16(cdOff + 32, true);
+    const lho     = dv.getUint32(cdOff + 42, true);
+    const name    = dec.decode(u8.subarray(cdOff + 46, cdOff + 46 + nLen));
+    // локальный заголовок
+    const lnLen   = dv.getUint16(lho + 26, true);
+    const lxLen   = dv.getUint16(lho + 28, true);
+    const dataOff = lho + 30 + lnLen + lxLen;
+    const e = {name, method, crc, cSize, uSize, dataOff, lho};
+    entries.push(e);
+    if(name === 'xl/workbook.xml') target = e;
+    cdOff += 46 + nLen + xLen + cLen;
+  }
+  if(!target) return new Blob([u8], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  // данные workbook.xml
+  let xmlBytes;
+  const raw = u8.subarray(target.dataOff, target.dataOff + target.cSize);
+  if(target.method === 0){ xmlBytes = raw.slice(); }
+  else{
+    const ds = new DecompressionStream('deflate-raw');
+    const stream = new Blob([raw]).stream().pipeThrough(ds);
+    xmlBytes = new Uint8Array(await new Response(stream).arrayBuffer());
+  }
+  let xml = dec.decode(xmlBytes);
+  if(xml.indexOf('fullCalcOnLoad') === -1){
+    xml = xml.replace('</workbook>', '<calcPr calcId="191029" calcMode="auto" fullCalcOnLoad="1"/></workbook>');
+  }
+  const enc = new TextEncoder();
+  const newXml = enc.encode(xml);
+  // сжимаем обратно
+  const cs = new CompressionStream('deflate-raw');
+  const cStream = new Blob([newXml]).stream().pipeThrough(cs);
+  const packed = new Uint8Array(await new Response(cStream).arrayBuffer());
+  // CRC-32
+  const table = (() => { const t = new Uint32Array(256); for(let n = 0; n < 256; n++){ let c = n; for(let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c; } return t; })();
+  const crcOf = buf => { let c = 0xFFFFFFFF; for(let i = 0; i < buf.length; i++) c = table[(c ^ buf[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+  const newCrc = crcOf(newXml);
+  // собираем новый zip: все записи, у целевой — новые данные; центральный каталог пересобираем
+  const parts = [];
+  const centrals = [];
+  let offset = 0;
+  for(const e of entries){
+    const data = e === target ? packed : u8.subarray(e.dataOff, e.dataOff + e.cSize);
+    const crc = e === target ? newCrc : e.crc;
+    const cs2 = e === target ? data.length : e.cSize;
+    const us2 = e === target ? newXml.length : e.uSize;
+    const nameB = enc.encode(e.name);
+    const lh = new Uint8Array(30 + nameB.length);
+    const ld = new DataView(lh.buffer);
+    ld.setUint32(0, 0x04034b50, true);
+    ld.setUint16(4, 20, true);
+    ld.setUint16(8, e.method === 0 && e !== target ? 0 : 8, true);
+    ld.setUint32(14, crc, true);
+    ld.setUint32(18, cs2, true);
+    ld.setUint32(22, us2, true);
+    ld.setUint16(26, nameB.length, true);
+    lh.set(nameB, 30);
+    parts.push(lh, data);
+    const ch = new Uint8Array(46 + nameB.length);
+    const cd = new DataView(ch.buffer);
+    cd.setUint32(0, 0x02014b50, true);
+    cd.setUint16(4, 20, true); cd.setUint16(6, 20, true);
+    cd.setUint16(10, e.method === 0 && e !== target ? 0 : 8, true);
+    cd.setUint32(16, crc, true);
+    cd.setUint32(20, cs2, true);
+    cd.setUint32(24, us2, true);
+    cd.setUint16(28, nameB.length, true);
+    cd.setUint32(42, offset, true);
+    ch.set(nameB, 46);
+    centrals.push(ch);
+    offset += lh.length + data.length;
+  }
+  const cdStart = offset;
+  let cdSize = 0; centrals.forEach(c => cdSize += c.length);
+  const eocdB = new Uint8Array(22);
+  const ed = new DataView(eocdB.buffer);
+  ed.setUint32(0, 0x06054b50, true);
+  ed.setUint16(8, entries.length, true);
+  ed.setUint16(10, entries.length, true);
+  ed.setUint32(12, cdSize, true);
+  ed.setUint32(16, cdStart, true);
+  return new Blob([...parts, ...centrals, eocdB], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+
+async function exportExcel(){
+  const r = calc();
+  const s = r.s;
+
+  const wb = XLSX.utils.book_new();
+  wb.Workbook = {CalcPr: {fullCalcOnLoad: 1}};
+
+  /* ---------- Лист «Справочник» ---------- */
+  const spr = [
+    ['Форматы','Формы','Источник',null,null,'Нормативы',null,null,null,null,null,null,null,null],
+    ['очный/офлайн на территории КФУ','очная','Бюджетное финансирование (федеральное)',null,null,'Формат','Накладные','Централизованные','Плановые накопления','ИТОГО','Ключ','Накладные','Централизованные','Плановые'],
+    ['очный/офлайн на территории Заказчика','очно-заочная','Бюджетное финансирование (региональное)',null,null,'Бюджетные',0.05,0.15,0,0.2,'Бюджетные_очный/офлайн на территории КФУ',0.05,0.15,0],
+    ['онлайн синхронный','заочная','Бюджетное финансирование (местное)',null,null,'Очный/Офлайн на территории КФУ; гибридный',0.05,0.15,0,0.2,'Бюджетные_очный/офлайн на территории Заказчика',0.05,0.15,0],
+    ['онлайн асинхронный',null,'Платные услуги',null,null,'Очный/Офлайн на территории Заказчика',0.05,0.15,0,0.2,'Бюджетные_онлайн синхронный',0.05,0.15,0],
+    ['смешанный',null,'Целевые средства',null,null,'Онлайн синхронный',0.05,0.15,0,0.2,'Бюджетные_онлайн асинхронный',0.05,0.15,0],
+    ['гибридный',null,'Смешанное',null,null,'Онлайн асинхронный',0.05,0.15,0,0.2,'Бюджетные_смешанный',0.05,0.15,0],
+    [null,null,null,null,null,'Смешанный',0.1,0.12,0,0.22,'Бюджетные_гибридный',0.05,0.15,0],
+    [null,null,null,null,null,'Внебюджетные',null,null,null,null,'Внебюджетные_очный/офлайн на территории КФУ',0.1,0.2,0.05],
+    [null,null,null,null,null,'Очный/Офлайн на территории КФУ; гибридный',0.1,0.2,0.05,0.35,'Внебюджетные_очный/офлайн на территории Заказчика',0.05,0.15,0.05],
+    [null,null,null,null,null,'Очный/Офлайн на территории Заказчика',0.05,0.15,0.05,0.25,'Внебюджетные_онлайн синхронный',0.05,0.2,0.05],
+    [null,null,null,null,null,'Онлайн синхронный',0.05,0.2,0.05,0.3,'Внебюджетные_онлайн асинхронный',0.05,0.15,0.05],
+    [null,null,null,null,null,'Онлайн асинхронный',0.05,0.15,0.05,0.25,'Внебюджетные_смешанный',0.1,0.17,0.05],
+    [null,null,null,null,null,'Смешанный',0.1,0.17,0.05,0.32,'Внебюджетные_гибридный',0.1,0.2,0.05],
+    [],
+    ['тип',null,null,null,null,'способ распределения',null,null,null,'Тип роялти'],
+    ['дополнительной профессиональной программы повышения квалификации',null,null,null,null,'а) на консервативное количество групп',null,null,null,'а) Фиксированная сумма на группу'],
+    ['дополнительной профессиональной программы профессиональной переподготовки',null,null,null,null,'б) в полном объеме в 1-ю группу',null,null,null,'б) Процент от выручки'],
+    ['дополнительной общеобразовательной общеразвивающей программы для взрослых',null,null,null,null,null,null,null,null,'в) Сумма на 1 обучающегося'],
+    ['дополнительной общеобразовательной общеразвивающей программы для детей'],
+    ['основной программы профессионального обучения']
+  ];
+  const wsSpr = XLSX.utils.aoa_to_sheet(spr);
+  wsSpr['!cols'] = [{wch:44},{wch:14},{wch:38},{wch:2},{wch:2},{wch:40},{wch:11},{wch:16},{wch:18},{wch:8},{wch:52},{wch:11},{wch:16},{wch:10}];
+
+  /* ---------- Лист «ФЭО» ---------- */
+  const cells = {};
+  let maxRow = 1;
+  const putS = (col, row, v) => { cells[col + row] = {t:'s', v:String(v)}; maxRow = Math.max(maxRow, row); };
+  const putN = (col, row, v, z) => { cells[col + row] = {t:'n', v:Number(v) || 0}; if(z) cells[col + row].z = z; maxRow = Math.max(maxRow, row); };
+  const putF = (col, row, f, z) => { cells[col + row] = {t:'n', v:0, f}; if(z) cells[col + row].z = z; maxRow = Math.max(maxRow, row); };
+  const M2 = '#,##0.00', M0 = '#,##0';
+
+  // Шапка документа
+  putS('B',1,'УТВЕРЖДАЮ');
+  putS('B',2,'Проректор по дополнительному образованию');
+  putS('B',3,'_________________________И.А. Хайруллин');
+  putS('B',4,'«_____» __________________ 20___г.');
+  putS('B',6,'Финансово-экономическое обоснование стоимости');
+  putS('B',7,s.type);
+  putS('B',8,s.name || 'наименование программы');
+  putS('B',9,'Подразделение, ответственное за реализацию программы,');
+  putS('B',10,s.unit || '');
+  putS('B',11,'Сведения о программе');
+
+  // Сведения о программе — поля ввода (адреса соответствуют шаблону, где возможно)
+  let R = 13;
+  const srow = (numb, label, col, val, z) => {
+    putS('B', R, numb); putS('C', R, label);
+    if(val !== undefined){ if(typeof val === 'number') putN(col, R, val, z); else putS(col, R, val); }
+    R++;
+  };
+  srow('1.',  'Форма обучения', 'D', s.form);                       const A_form = 'D13';   R = 14;
+  srow('2.',  'Формат обучения', 'D', s.format);                    const A_format = 'D14'; R = 15;
+  srow('3.',  'Плановый набор (чел.)', 'D', s.people, M0);          const A_people = 'D15'; R = 16;
+  srow('4.',  'Общая трудоемкость программы (ак.час.)', 'D', s.hours, M0); const A_hours = 'D16'; R = 17;
+  srow('5.',  'Учебная нагрузка (час.):');                                             // R=17
+  srow('5.1.','лекции', 'D', s.lec, M0);                          const A_lec = 'D18';    R = 19;
+  srow('5.2.','практические занятия', 'D', s.prac, M0);           const A_prac = 'D19';   R = 20;
+  srow('5.3.','лабораторные занятия', 'D', s.lab, M0);            const A_lab = 'D20';    R = 21;
+  // 5.4 — итог формулой по подстрокам
+  putS('B',21,'5.4.'); putS('C',21,'иное (детализация видов контактной работы — в соответствии с ЛНА КФУ и утверждённой Программой), в том числе:');
+  const n54 = s.otherLoadRows.length;
+  if(n54 > 0) putF('D',21,'SUM(D22:D' + (21 + n54) + ')', M0); else putN('D',21,0,M0);
+  const A_54 = 'D21';
+  R = 22;
+  s.otherLoadRows.forEach((row, i) => {
+    putS('B', R, '5.4.' + (i + 1) + '.'); putS('C', R, row.name || ('вид работ ' + (i + 1)));
+    putN('D', R, row.val, M0); R++;
+  });
+  // 6. Внеучебная нагрузка
+  const r6 = R;
+  const n6 = s.extraRows.length;
+  putS('B', r6, '6.'); putS('C', r6, 'Внеучебная нагрузка (час.):');
+  if(n6 > 0) putF('D', r6, 'SUM(D' + (r6 + 1) + ':D' + (r6 + n6) + ')', M0); else putN('D', r6, 0, M0);
+  R++;
+  s.extraRows.forEach((row, i) => {
+    putS('B', R, '6.' + (i + 1) + '.'); putS('C', R, row.name || ('вид работ / услуг ' + (i + 1)));
+    putN('D', R, row.val, M0); R++;
+  });
+  R++;
+  // 7. Трудоёмкость по категориям
+  putS('B', R, '7.'); putS('C', R, 'Детализация трудоемкости по категориям работников (час.)'); R++;
+  const catNames = ['ППС со степенью доктора наук','ППС со степенью кандидата наук','ППС без ученой степени','Иные категории работников КФУ','Привлекаемые по договорам ГПХ'];
+  const catH = [s.hDoc, s.hKand, s.hPps, s.hOther, s.hGph];
+  const catR = [s.rDoc, s.rKand, s.rPps, s.rOther, s.rGph];
+  const A_h = [];
+  catNames.forEach((nm, i) => { putS('B', R, '7.' + (i + 1) + '.'); putS('C', R, nm); putN('D', R, catH[i], M0); A_h.push('D' + R); R++; });
+  R++;
+  putS('B', R, '8.'); putS('C', R, 'Ставки почасовой оплаты (руб.)'); R++;
+  const A_r = [];
+  catNames.forEach((nm, i) => { putS('B', R, '8.' + (i + 1) + '.'); putS('C', R, nm); putN('D', R, catR[i], M2); A_r.push('D' + R); R++; });
+  R++;
+  // 9. Стоимость
+  putS('B', R, '9.'); putS('C', R, 'Полная стоимость обучения на одного человека (руб.)'); putN('D', R, s.price, M2); const A_price = 'D' + R; R++;
+  putS('B', R, '9.1.'); putS('C', R, '% скидки (если предусмотрено)'); putN('D', R, s.discount, M0); const A_disc = 'D' + R; R++;
+  putS('B', R, '9.2.'); putS('C', R, 'стоимость обучения на одного человека со скидкой ' + s.discount + '% (руб.)');
+  putF('D', R, A_price + '*(1-' + A_disc + '/100)', M2); R++; R++;
+  // 10-11
+  putS('B', R, '10.'); putS('C', R, 'Тема финансирования'); putS('D', R, s.theme); R++;
+  putS('B', R, '11.'); putS('C', R, 'Источник финансирования'); putS('D', R, s.source); const A_source = 'D' + R; R++; R++;
+  // 12. Онлайн-курс
+  putS('B', R, '12.'); putS('C', R, 'Расходы на онлайн-курс (только при асинхронном/смешанном формате, в иных случаях скрыть строки)'); R++;
+  putS('B', R, '12.1.'); putS('C', R, 'Авторский гонорар (вознаграждение за создание контента), руб.'); putN('D', R, s.honor, M2); const A_honor = 'D' + R; R++;
+  putS('B', R, '12.1.1.'); putS('C', R, 'Способ распределения:'); putS('D', R, s.honorMode === 'а' ? 'а) на консервативное количество групп' : 'б) в полном объеме в 1-ю группу');
+  const A_hmode = 'D' + R; putF('G', R, 'LEFT(' + A_hmode + ',1)'); const A_hmodeG = 'G' + R; R++;
+  putS('B', R, '12.1.2.'); putS('C', R, 'Консервативное количество групп (для варианта "а")'); putN('D', R, s.groups, M0); const A_groups = 'D' + R; R++;
+  putS('B', R, '12.2.'); putS('C', R, 'Роялти (периодические отчисления за использование контента), руб. или % в зависимости от типа роялти'); putN('D', R, s.royalty, M2); const A_royalty = 'D' + R; R++;
+  putS('B', R, '12.2.1.'); putS('C', R, 'Тип роялти:'); putS('D', R, {а:'а) фиксированная сумма на группу', б:'б) процент от выручки', в:'в) сумма на 1 обучающегося'}[s.royaltyType]);
+  const A_rtype = 'D' + R; putF('G', R, 'LEFT(' + A_rtype + ',1)'); const A_rtypeG = 'G' + R; R++; R++;
+
+  /* ---------- Калькуляция ---------- */
+  putS('B', R, 'Калькуляция программы'); R++;
+  ['A','B','C','D','E','F'].forEach(() => {});
+  putS('A', R, '№ п/п'); putS('C', R, 'Виды расходов'); putS('D', R, 'Код расходов');
+  putS('E', R, 'Сумма на 1 чел., руб.'); putS('F', R, 'Сумма на плановый набор, руб.'); R++;
+
+  const crow = (numb, name, code, eFormula, fFormula, eVal, fVal) => {
+    if(numb) putS('A', R, numb);
+    putS('C', R, name);
+    if(code) putS('D', R, String(code));
+    if(eFormula){ putF('E', R, eFormula, M2); } else if(eVal !== undefined){ putN('E', R, eVal, M2); }
+    if(fFormula){ putF('F', R, fFormula, M2); } else if(fVal !== undefined){ putN('F', R, fVal, M2); }
+    R++;
+    return R - 1;
+  };
+  const csec = (numb, name) => { putS('A', R, numb); putS('C', R, name); R++; };
+
+  const per1 = f => 'IF(' + A_people + '>0,' + f + '/' + A_people + ',0)';
+  const isAsyncF = 'OR(' + A_format + '="онлайн асинхронный",' + A_format + '="смешанный")';
+
+  csec('1.', 'ДОХОДЫ');
+  const rE55 = crow('1.1.', 'Выручка от реализации программы', '', A_price, null);
+  putF('F', rE55, 'E' + rE55 + '*' + A_people, M2);
+  const A_E55 = 'E' + rE55;
+
+  csec('2.', 'РАСХОДЫ');
+  const rSub1 = R; putS('A', R, '2.1.'); putS('C', R, 'Постоянные расходы'); R++;   // итог ниже формулами
+  // ЗП всего
+  const rZp = crow('1.', 'Заработная плата всего:', '', null, null);
+  putS('C', R, 'в том числе:'); R++;
+  const rCat = [];
+  catNames.slice(0, 4).forEach((nm, i) => {
+    const rr = crow('1.' + (i + 1) + '.', 'Заработная плата ' + nm.charAt(0).toLowerCase() + nm.slice(1), '211',
+      null, A_h[i] + '*' + A_r[i]);
+    putF('E', rr, per1('F' + rr), M2);
+    rCat.push(rr);
+  });
+  putF('F', rZp, 'SUM(F' + rCat[0] + ':F' + rCat[3] + ')', M2);
+  putF('E', rZp, per1('F' + rZp), M2);
+  const rOtp1 = crow('2.', 'Отпускной фонд ППС', '211', null, '(F' + rCat[0] + '+F' + rCat[1] + '+F' + rCat[2] + ')*0.17');
+  putF('E', rOtp1, per1('F' + rOtp1), M2);
+  const rOtp2 = crow('3.', 'Отпускной фонд иных категорий работников КФУ', '211', null, 'F' + rCat[3] + '*0.09');
+  putF('E', rOtp2, per1('F' + rOtp2), M2);
+  const rSoc = crow('4.', 'Социальные платежи', '213', null, '(F' + rZp + '+F' + rOtp1 + '+F' + rOtp2 + ')*30.2/100');
+  putF('E', rSoc, per1('F' + rSoc), M2);
+  const rGph = crow('5.', 'Вознаграждение лиц по договорам ГПХ', '226', null, A_h[4] + '*' + A_r[4]);
+  putF('E', rGph, per1('F' + rGph), M2);
+  const rSocG = crow('5.1.', 'Социальные платежи', '226', null, 'F' + rGph + '*0.3');
+  putF('E', rSocG, per1('F' + rSocG), M2);
+  // Иные постоянные — подстроки (E — поля ввода, F — формула)
+  const rOtT = crow('6.', 'Иные постоянные расходы, в том числе:', '', null, null);
+  const rOtRows = [];
+  s.otFixedRows.forEach((row, i) => {
+    const rr = crow('6.' + (i + 1) + '.', row.name || ('статья ' + (i + 1)), '', null, null, row.val);
+    putF('F', rr, 'IF(E' + rr + '>0,E' + rr + '*' + A_people + ',0)', M2);
+    rOtRows.push(rr);
+  });
+  if(rOtRows.length){
+    putF('E', rOtT, 'SUM(E' + rOtRows[0] + ':E' + rOtRows[rOtRows.length - 1] + ')', M2);
+    putF('F', rOtT, 'SUM(F' + rOtRows[0] + ':F' + rOtRows[rOtRows.length - 1] + ')', M2);
+  } else { putN('E', rOtT, 0, M2); putN('F', rOtT, 0, M2); }
+  const rHon = crow('7.', 'Авторский гонорар (при асинхронном/смешанном формате)', '226', null,
+    'IF(AND(' + isAsyncF + ',' + A_hmodeG + '="а"),' + A_honor + '/' + A_groups + ',IF(AND(' + isAsyncF + ',' + A_hmodeG + '="б"),' + A_honor + ',0))');
+  putF('E', rHon, per1('F' + rHon), M2);
+  const rRoy = crow('8.', 'Роялти (при асинхронном/смешанном формате), фиксированная стоимость за плановый набор', '226', null,
+    'IF(AND(' + isAsyncF + ',' + A_rtypeG + '="а"),' + A_royalty + ',0)');
+  putF('E', rRoy, per1('F' + rRoy), M2);
+  // Итог постоянных 2.1. (итоговые строки 1. и 6. не суммируются повторно)
+  putF('E', rSub1, 'SUM(E' + rOtp1 + ':E' + rSocG + ')+E' + rZp + '+E' + rOtT + '+E' + rHon + '+E' + rRoy, M2);
+  putF('F', rSub1, 'SUM(F' + rOtp1 + ':F' + rSocG + ')+F' + rZp + '+F' + rOtT + '+F' + rHon + '+F' + rRoy, M2);
+
+  // Переменные
+  const rSub2 = R; putS('A', R, '2.2.'); putS('C', R, 'Переменные расходы'); R++;
+  const rVarT = crow('1.', 'Переменные расходы, в том числе:', '', null, null);
+  const rVarRows = [];
+  s.varRows.forEach((row, i) => {
+    const rr = crow('1.' + (i + 1) + '.', row.name || ('статья ' + (i + 1)), '', null, null, row.val);
+    putF('F', rr, 'IF(E' + rr + '>0,E' + rr + '*' + A_people + ',0)', M2);
+    rVarRows.push(rr);
+  });
+  if(rVarRows.length){
+    putF('E', rVarT, 'SUM(E' + rVarRows[0] + ':E' + rVarRows[rVarRows.length - 1] + ')', M2);
+    putF('F', rVarT, 'SUM(F' + rVarRows[0] + ':F' + rVarRows[rVarRows.length - 1] + ')', M2);
+  } else { putN('E', rVarT, 0, M2); putN('F', rVarT, 0, M2); }
+  const rBso = crow('2.', 'Расчеты по текущим операциям' + (s.bsoText ? ' (' + s.bsoText + ')' : ' (бланки строгой отчетности)'), '', null, null, s.bso);
+  putF('F', rBso, 'IF(E' + rBso + '>0,E' + rBso + '*' + A_people + ',0)', M2);
+  const rRoyV = crow('3.', 'Роялти (при асинхронном/смешанном формате), плавающая стоимость от количества обучающихся', '',
+    'IF(AND(' + isAsyncF + ',' + A_rtypeG + '="в"),' + A_royalty + ',IF(AND(' + isAsyncF + ',' + A_rtypeG + '="б"),' + A_royalty + '/100*' + A_E55 + ',0))', null);
+  putF('F', rRoyV, 'IF(E' + rRoyV + '>0,E' + rRoyV + '*' + A_people + ',0)', M2);
+  const rOtc = crow('4.', 'Отчисления, в том числе:', '', null, null);
+  const keyF = 'IF(ISNUMBER(SEARCH("Бюджетное",' + A_source + ')),"Бюджетные_","Внебюджетные_")&' + A_format;
+  const lk = "'Справочник'!$K$3:$N$14";
+  const rCen = crow('4.1.', 'Централизованные средства', '813', 'IFERROR(' + A_price + '*VLOOKUP(' + keyF + ',' + lk + ',3,0),0)', null);
+  putF('F', rCen, 'IF(E' + rCen + '=0,0,E' + rCen + '*' + A_people + ')', M2);
+  const rNak = crow('4.2.', 'Накладные расходы', '812', 'IFERROR(' + A_price + '*VLOOKUP(' + keyF + ',' + lk + ',2,0),0)', null);
+  putF('F', rNak, 'IF(E' + rNak + '=0,0,E' + rNak + '*' + A_people + ')', M2);
+  const rPlan = crow('4.3.', 'Плановые накопления', '816', 'IFERROR(' + A_price + '*VLOOKUP(' + keyF + ',' + lk + ',4,0),0)', null);
+  putF('F', rPlan, 'IF(E' + rPlan + '=0,0,E' + rPlan + '*' + A_people + ')', M2);
+  putF('E', rOtc, 'SUM(E' + rCen + ':E' + rPlan + ')', M2);
+  putF('F', rOtc, 'SUM(F' + rCen + ':F' + rPlan + ')', M2);
+  putF('E', rSub2, 'E' + rVarT + '+E' + rBso + '+E' + rRoyV + '+E' + rOtc, M2);
+  putF('F', rSub2, 'F' + rVarT + '+F' + rBso + '+F' + rRoyV + '+F' + rOtc, M2);
+
+  // Экономические показатели
+  csec('3.', 'ЭКОНОМИЧЕСКИЕ ПОКАЗАТЕЛИ');
+  const rC1 = crow('3.1.', 'Полная себестоимость Программы, руб.', '', null, 'F' + rSub2 + '+F' + rSub1);
+  const rC2 = crow('3.2.', 'Цена реализации на 1 обучающегося, руб.', '', null, 'E' + rSub2 + '+E' + rSub1);
+  const rC3 = crow('3.3.', 'Точка безубыточности, чел.', '', null, 'IF(' + A_price + '=0,0,ROUNDUP(F' + rC1 + '/' + A_price + ',0))');
+  cells['F' + rC3].z = M0;
+  const rC4 = crow('3.4.', 'Маржинальный доход, руб.', '820', null, 'F' + rE55 + '-F' + rC1);
+  const rC5 = crow('3.5.', 'Маржинальность, %', '', null, 'IF(F' + rC4 + '=0,0,F' + rC4 + '/F' + rE55 + ')');
+  cells['F' + rC5].z = '0.0%';
+
+  R++;
+  // Согласование
+  putS('B', R, 'СОГЛАСОВАНО:'); R++;
+  putS('B', R, 'Директор Департамента развития дополнительного образования'); putS('E', R, '________________/ И.О. Фамилия'); R++;
+  putS('B', R, 'Директор Департамента экономики и финансов'); putS('E', R, '________________/ И.О. Фамилия'); R++;
+  putS('B', R, 'Руководитель основного структурного подразделения'); putS('E', R, '________________/ И.О. Фамилия'); R += 2;
+  putS('A', R, 'ПРИМЕЧАНИЯ:'); R++;
+  const notes = [
+    '1. Желтые ячейки — для ручного ввода данных. Зеленые ячейки — автоматический расчет по формулам.',
+    '2. При добавлении строк в блоки 5.4 (иное), 6 (внеучебная нагрузка), иные постоянные и переменные расходы — суммы включаются в итоги автоматически (формулы SUM протягиваются).',
+    '3. Для бюджетных программ: расчет точки безубыточности и маржинальности не применяется (п. 2.4 Порядка).',
+    '4. Точка безубыточности считается БЕЗ учета маржинального дохода, но С учетом плановых накоплений; округляется до целого числа в большую сторону.',
+    '5. Нормативы отчислений (раздел 4 Порядка) подтягиваются автоматически из справочника. Бюджетные программы — 20% (5% накладные + 15% централизованные), внебюджетные — по формату.',
+    '6. Отпускной фонд: 17% от ФОТ ППС и 9% от ФОТ иных категорий работников КФУ. Социальные платежи — 30,2% от ФОТ; по договорам ГПХ — 30%.',
+    '7. Авторский гонорар и роялти отображаются только при выборе формата "онлайн асинхронный" или "смешанный".',
+    '8. При варианте "а" (консервативное кол-во групп) гонорар распределяется на указанное количество групп.',
+    '9. При варианте "б" (полная сумма в 1-ю группу) гонорар включается в постоянные расходы первого набора.',
+    '10. Роялти: тип определяет формулу — фиксированная сумма на группу, процент от выручки или сумма на 1 обучающегося.',
+    '11. Перечень статей расходов может изменяться в зависимости от реальных затрат.',
+    '12. Механизм защиты бюджета КФУ: при превышении рыночной цены — решение проректора по ДО по согласованию с проректором по финансам (п. 4.6 Порядка).',
+    '13. Форма обучения определяется долей контактной работы педагогического работника с обучающимся: очная — более 65%, очно-заочная — от 20% до 64%, заочная — менее 19%.'
+  ];
+  notes.forEach(note => { putS('A', R, note); R++; });
+
+  const ws = { '!ref': 'A1:G' + maxRow, '!cols': [{wch:7},{wch:7},{wch:52},{wch:14},{wch:16},{wch:18},{wch:6}] };
+  Object.keys(cells).forEach(k => ws[k] = cells[k]);
+
+  XLSX.utils.book_append_sheet(wb, ws, 'ФЭО');
+  XLSX.utils.book_append_sheet(wb, wsSpr, 'Справочник');
+
+  const out = XLSX.write(wb, {bookType: 'xlsx', type: 'array', bookDeps: true});
+  const blob = await patchCalcOnLoad(out);
+  const a = document.createElement('a');
+  const fname = ('ФЭО_' + (s.name || 'программа')).replace(/[\\/:*?"<>|]/g, '_').slice(0, 120) + '.xlsx';
+  a.href = URL.createObjectURL(blob);
+  a.download = fname;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+
+$('btn-excel').addEventListener('click', exportExcel);
+</script>
+</body>
+</html>
